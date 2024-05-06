@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+
 struct crypt_context context;
 uint8_t *buffer;
 uint32_t buffer_size;
@@ -120,18 +121,8 @@ int main(int argc, char *argv[])
     printf("No output file. Printing data to std output\n");
     output_file = stdout;
   }
+
   uint8_t key[] = {0xc1, 0xab, 0xe5, 0xec, 0x1e, 0x7a};
-
-  uint8_t coded1[] = {0x85, 0xc9, 0x84, 0x80, 0x46, 0x16, 0xaf, 0xca,
-
-                      0xc9, 0x81, 0x43, 0xe1, 0xac, 0xdd, 0xcb, 0x81,
-
-                      0x45, 0xa9, 0xa3, 0xca, 0xcd, 0x9b, 0x41, 0xfc,
-
-                      0xb3, 0xd5, 0x8c, 0x8f, 0x1c, 0x99
-
-  };
-
   uint8_t coded2[] = {0x92, 0xc5, 0x90, 0x8a, 0x43, 0xeb, 0xe1, 0xc1,
 
                       0x9b, 0x6e, 0x4f, 0xf1, 0xa5, 0x93, 0x97, 0x61,
@@ -153,6 +144,7 @@ int main(int argc, char *argv[])
                       0xef, 0xb7
 
   };
+
 
   uint8_t coded3[] = {0x5a, 0x56, 0x07, 0xa0, 0xb4, 0xcd, 0x2b, 0x56,
 
@@ -193,21 +185,15 @@ int main(int argc, char *argv[])
   };
 
   //<main code, variable declaration, library initialization,...>
-  context.key = &key[0];
   context.key_size = sizeof(key) / sizeof(key[0]);
-  // memcpy(context.key, key, context.key_size);
+  context.key = &key[0];
+  //memcpy(context.key, key, context.key_size);
 
-  buffer = reserve_buffer(sizeof(coded1));
+  printf("Decoding and printing coded2...\n");
   debug_key();
-  printf("Decoding and printing coded1...\n");
-  DECODE_AND_PRINT(coded1);
+  buffer = reserve_buffer(sizeof(coded2));
+  DECODE_AND_PRINT(coded2);
   clean_up_buffer(buffer);
-
-  // printf("Decoding and printing coded2...\n");
-  // debug_key();
-  // buffer = reserve_buffer(sizeof(coded2));
-  // DECODE_AND_PRINT(coded2);
-  // clean_up_buffer(buffer);
 
   // printf("Decoding and printing coded3...\n");
   // debug_key();

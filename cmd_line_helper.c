@@ -55,7 +55,12 @@ Arguments parse_arguments(int argc, char *argv[])
             break;
         case 'k':
             printf("Key: %s\n", optarg);
-            validate_key(optarg);
+            const bool is_key_valid = validate_key(optarg);
+            if(!is_key_valid)
+            {
+                fprintf(stderr, "Error: Invalid key length\n");
+                exit(EXIT_FAILURE);
+            }
             args.key = optarg;
             break;
         case 'f':
