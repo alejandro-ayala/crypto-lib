@@ -12,25 +12,12 @@ uint32_t buffer_size;
 Arguments args;
 FILE *output_file;
 
-// #define DECODE_AND_PRINT(c)                                      \
-//   {                                                              \
-//     buffer = reserve_buffer(sizeof(c));                          \
-//     crypt_buffer(&context, buffer, c, sizeof(c) / sizeof(c[0])); \
-//     fwrite(buffer, 1, sizeof(c), output_file);                   \
-//     clean_up_buffer(buffer);                                     \
-//   }
-
 #define DECODE_AND_PRINT(c)                                      \
   {                                                              \
-    printf("Reserving buffer\n");                                \
     buffer = reserve_buffer(sizeof(c));                          \
-    printf("Buffer reserved\n");                                 \
     crypt_buffer(&context, buffer, c, sizeof(c) / sizeof(c[0])); \
-    printf("Buffer decoded\n");                                  \
     fwrite(buffer, 1, sizeof(c), output_file);                   \
-    printf("Buffer written to file\n");                          \
     clean_up_buffer(buffer);                                     \
-    printf("Buffer cleaned\n");                                  \
   }
 
 static void *reserve_buffer(const uint32_t size)
@@ -143,68 +130,44 @@ void assign_output_file(const char *output_file_name)
   }
 }
 
-void read_input_data(const char *input_file)
+void read_input_data(const char *input_file, char **buffer, int *buffer_size)
 {
-  int buffer_size = 0;
-  if (args.input_file != NULL)
+  if (input_file != NULL)
   {
-    printf("Input file: %s\n", args.input_file);
-    read_file(args.input_file, &buffer, &buffer_size);
+    printf("Input file: %s\n", input_file);
+    read_file(input_file, buffer, buffer_size);
   }
   else
   {
     printf("No input file. Reading data from std input\n");
-    buffer = read_input(&buffer_size);
+    *buffer = read_input(buffer_size);
   }
 
-  //printf("Input data: %s --- totalSize: %d\n", buffer, buffer_size);
-  for(size_t i = 0; i < buffer_size; i++)
+  for (int i = 0; i < *buffer_size; i++)
   {
-    printf("0x%x,", buffer[i]);
+    printf("0x%x,", (*buffer)[i]);
   }
 }
 
 int main(int argc, char *argv[])
 {
 
-  /*******
-      uint8_t coded1[] = {0x85, 0xc9, 0x84, 0x80, 0x46, 0x16, 0xaf, 0xca,
-
-                          0xc9, 0x81, 0x43, 0xe1, 0xac, 0xdd, 0xcb, 0x81,
-
-                          0x45, 0xa9, 0xa3, 0xca, 0xcd, 0x9b, 0x41, 0xfc,
-
-                          0xb3, 0xd5, 0x8c, 0x8f, 0x1c, 0x99
-
-      };
-  uint8_t key[] = {0xc1, 0xab, 0xe5, 0xec, 0x1e, 0x7a};
-  write_ascii_to_file("input.txt", coded1, sizeof(coded1) / sizeof(coded1[0]));
-  write_ascii_to_file("key.txt", key, sizeof(key) / sizeof(key[0]));
-
-
-  return 0;
-  *******/
   args = parse_arguments(argc, argv);
 
   if (args.request_api_version)
   {
-    // struct crypt_library_version version = get_version();
-    printf("Version: %d.%d.%d\n"); // version.major, version.minor, version.patch
+    struct crypt_library_version version = get_version();
+    printf("Version: %d.%d.%d\n",  version.major, version.minor, version.patch);
     return 0;
   }
 
   read_key(&context, args.key_file, args.key);
   assign_output_file(args.output_file);
-  read_input_data(args.input_file);
-
+  read_input_data(args.input_file, (char **)&buffer, (int *)&buffer_size);
+  
   uint8_t buffer_array[buffer_size];
   memcpy(buffer_array, buffer, buffer_size);
   free(buffer);
-  printf("printing buffer_array\n");
-  for (size_t i = 0; i < buffer_size; i++)
-  {
-    printf("%d", buffer_array[i]);
-  }
   DECODE_AND_PRINT(buffer_array);
 
   //

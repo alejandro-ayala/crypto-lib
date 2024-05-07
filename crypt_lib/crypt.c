@@ -37,7 +37,7 @@ int crypt_buffer(struct crypt_context *context, uint8_t *output, const uint8_t *
     printf("Output:");
     for(unsigned index_output = 0; index_output < length; index_output++)
     {
-        printf("0x%x", output[index_output]);
+        printf("0x%x,", output[index_output]);
     }
     printf("\n");
     

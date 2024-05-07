@@ -1,5 +1,6 @@
 
 **/*.so
 **/*.o
+*.txt
+!resources/*.txt
 test/acutest/*
-**/*.txt
