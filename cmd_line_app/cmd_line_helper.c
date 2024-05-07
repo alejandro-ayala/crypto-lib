@@ -11,14 +11,14 @@
 
 static void print_help()
 {
-    fprintf(stdout, "Usage: crypt [-h] [-v] -k <key> | -f <key_file> [-o <output_file>] [<input_file>]\n");
-    fprintf(stdout, "Valid arguments:\n");
-    fprintf(stdout, "  -%c, show the help\n", HELP_SHORT_OPTION);
-    fprintf(stdout, "  -%c <key> \n", KEY_SHORT_OPTION);
-    fprintf(stdout, "  -%c <key_file> \n", KEY_FILE_SHORT_OPTION);
-    fprintf(stdout, "  -%c <output_file>\n", OUTPUT_FILE_SHORT_OPTION);
-    fprintf(stdout, "  -%c, to get the current version of the API\n", VERSION_API_OPTION);
-    fprintf(stdout, "  <input_file>\n");
+    fprintf(stderr, "Usage: crypt [-h] [-v] -k <key> | -f <key_file> [-o <output_file>] [<input_file>]\n");
+    fprintf(stderr, "Valid arguments:\n");
+    fprintf(stderr, "  -%c, show the help\n", HELP_SHORT_OPTION);
+    fprintf(stderr, "  -%c <key> \n", KEY_SHORT_OPTION);
+    fprintf(stderr, "  -%c <key_file> \n", KEY_FILE_SHORT_OPTION);
+    fprintf(stderr, "  -%c <output_file>\n", OUTPUT_FILE_SHORT_OPTION);
+    fprintf(stderr, "  -%c, to get the current version of the API\n", VERSION_API_OPTION);
+    fprintf(stderr, "  <input_file>\n");
     exit(EXIT_SUCCESS);
 }
 
@@ -32,15 +32,13 @@ static void print_version()
 bool validate_key(const char *key)
 {
     size_t key_length = strlen(key);
-    //printf("Key length: %zu\n", key_length);
+    bool is_valid = true;
     if (key_length < MIN_KEY_LENGTH || key_length > MAX_KEY_LENGTH)
     {
         printf("invalid key length\n");
-        return false;
+        is_valid = false;
     }
-    {
-        return true;
-    }
+    return is_valid;
 }
 
 Arguments parse_arguments(int argc, char *argv[])
@@ -60,7 +58,7 @@ Arguments parse_arguments(int argc, char *argv[])
             const bool is_key_valid = validate_key(optarg);
             if(!is_key_valid)
             {
-                fprintf(stderr, "Error: Invalid key length\n");
+                fprintf(stderr, "Error: Invalid key length.\n");
                 exit(EXIT_FAILURE);
             }
             args.key = optarg;
@@ -74,7 +72,6 @@ Arguments parse_arguments(int argc, char *argv[])
                 exit(EXIT_FAILURE);
             }
             strcpy(args.key_file, optarg);
-
             break;
         case OUTPUT_FILE_SHORT_OPTION:
             if (strcmp(optarg, "-") != 0)

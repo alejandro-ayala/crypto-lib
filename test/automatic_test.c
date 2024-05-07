@@ -203,7 +203,7 @@ void automatic_test_sample(void)
 void automatic_test_encrypt_and_decrypt(void)
 {
     uint8_t original_key[] = {0xc1, 0xab, 0xe5, 0xec, 0x1e, 0x7a};
-    const uint8_t original_data[] = "aslkjdslkadsalkdjwsadlñakdlñkasñol eqrkop342rkeflñfñ,.\n";
+    const uint8_t original_data[] = "this test should be PASS because the status is reset before decoding\n";
     const size_t data_lenght = sizeof(original_data) / sizeof(original_data[0]);
     uint8_t encrypted_data[data_lenght];
     const size_t key_lenght = sizeof(original_key) / sizeof(original_key[0]);
@@ -222,7 +222,6 @@ void automatic_test_encrypt_and_decrypt(void)
     free(file_content);
 
     test_results_file = fopen("test_results_file.txt", "w+");
-    // context.key = &original_key[0];
     memcpy(context.key, original_key, key_lenght);
     context.key_size = key_lenght;
     context.iteration = 0;
@@ -230,6 +229,37 @@ void automatic_test_encrypt_and_decrypt(void)
     file_content = read_decoded_input();
     printf("Comparing '%s' to '%s':\n", file_content, original_data);
     TEST_CHECK(strcmp(file_content, original_data) == 0);
+    free(file_content);
+    free(context.key);
+}
+
+
+void automatic_test_encrypt_and_decrypt_fail(void)
+{
+    uint8_t original_key[] = {0xc1, 0xab, 0xe5, 0xec, 0x1e, 0x7a};
+    const uint8_t original_data[] = "this test should be fail because the status is not reset when decoding\n";
+    const size_t data_lenght = sizeof(original_data) / sizeof(original_data[0]);
+    uint8_t encrypted_data[data_lenght];
+    const size_t key_lenght = sizeof(original_key) / sizeof(original_key[0]);
+
+    uint8_t key[key_lenght];
+    memcpy(key, original_key, key_lenght);
+    context.key = malloc(key_lenght);
+    memcpy(context.key, original_key, key_lenght);
+    context.key_size = key_lenght;
+    context.iteration = 0;
+
+    test_results_file = fopen("test_results_file.txt", "w+");
+    DECODE_AND_PRINT(original_data);
+    uint8_t *file_content = read_decoded_input();
+    memcpy(encrypted_data, file_content, data_lenght);
+    free(file_content);
+
+    test_results_file = fopen("test_results_file.txt", "w+");
+    DECODE_AND_PRINT(encrypted_data);
+    file_content = read_decoded_input();
+    printf("Comparing '%s' to '%s':\n", file_content, original_data);
+    TEST_CHECK(strcmp(file_content, original_data) != 0);
     free(file_content);
     free(context.key);
 }
@@ -251,4 +281,5 @@ TEST_LIST = {
     {"check_library_version", check_library_version},
     {"automatic_test_sample", automatic_test_sample},
     {"automatic_test_encrypt_and_decrypt", automatic_test_encrypt_and_decrypt},
+    {"automatic_test_encrypt_and_decrypt_fail", automatic_test_encrypt_and_decrypt_fail},
     {NULL, NULL}};

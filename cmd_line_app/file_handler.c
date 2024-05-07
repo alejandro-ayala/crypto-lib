@@ -31,9 +31,9 @@ static char *read_input(int *total_buff_size)
     return NULL;
   }
 
-  printf("Introduce input data and press ENTER to finish:\n");
+  printf("Introduce input data and press ctrl+D to finish\n");
 
-  while ((c = getchar()) != '\n')
+  while ((c = getchar()) != EOF)
   {
     buffer[buff_size - 1] = c;
     buff_size++;
