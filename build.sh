@@ -10,7 +10,7 @@ compile_cmd_app() {
     compile_library
     cp $ouput_dir/libcrypt.so .
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH: &&
-    gcc -I./ -o $ouput_dir/cmd_cryp_app $cmd_app_dir/main.c $cmd_app_dir/cmd_line_helper.c -L. -lcrypt
+    gcc -I./ -o $ouput_dir/cmd_cryp_app $cmd_app_dir/main.c $cmd_app_dir/cmd_line_helper.c $cmd_app_dir/file_handler.c -L. -lcrypt
     if [ $? -eq 0 ]; then
         echo "cmd_app compiled"
     else
