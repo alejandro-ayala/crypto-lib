@@ -1,36 +1,38 @@
 #include "cmd_line_helper.h"
-#include "string_literals.h"
+#include "common/string_literals.h"
+#include "crypt_lib/crypt.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdbool.h>
 
 #define MIN_KEY_LENGTH 1
 #define MAX_KEY_LENGTH 256
 
 static void print_help()
 {
-    fprintf(stderr, "Usage: crypt [-h] -k <key> | -f <key_file> [-o <output_file>] [<input_file>]\n");
-    fprintf(stderr, "Valid arguments:\n");
-    fprintf(stderr, "  -%s, --%s\n", HELP_SHORT_OPTION, HELP_LONG_OPTION);
-    fprintf(stderr, "  -%s, --%s <key> \n", KEY_SHORT_OPTION, KEY_LONG_OPTION);
-    fprintf(stderr, "  -%s, --%s <key_file> \n", KEY_FILE_SHORT_OPTION, KEY_FILE_LONG_OPTION);
-    fprintf(stderr, "  -%s, --%s <output_file>\n", OUTPUT_FILE_SHORT_OPTION, OUTPUT_FILE_LONG_OPTION);
-    fprintf(stderr, "  <input_file>\n");
+    fprintf(stdout, "Usage: crypt [-h] [-v] -k <key> | -f <key_file> [-o <output_file>] [<input_file>]\n");
+    fprintf(stdout, "Valid arguments:\n");
+    fprintf(stdout, "  -%c, show the help\n", HELP_SHORT_OPTION);
+    fprintf(stdout, "  -%c <key> \n", KEY_SHORT_OPTION);
+    fprintf(stdout, "  -%c <key_file> \n", KEY_FILE_SHORT_OPTION);
+    fprintf(stdout, "  -%c <output_file>\n", OUTPUT_FILE_SHORT_OPTION);
+    fprintf(stdout, "  -%c, to get the current version of the API\n", VERSION_API_OPTION);
+    fprintf(stdout, "  <input_file>\n");
     exit(EXIT_SUCCESS);
 }
 
-static void print_error(char argv)
+static void print_version()
 {
-    fprintf(stderr, "Error: Invalid value after argument: %c \n", argv);
-    exit(1);
+    struct crypt_library_version version = get_version();
+    fprintf(stdout, "API version %d.%d.%d\n", version.major, version.minor, version.patch);
+    exit(EXIT_SUCCESS);
 }
 
-static bool validate_key(const char *key)
+bool validate_key(const char *key)
 {
     size_t key_length = strlen(key);
-    printf("Key length: %zu\n", key_length);
+    //printf("Key length: %zu\n", key_length);
     if (key_length < MIN_KEY_LENGTH || key_length > MAX_KEY_LENGTH)
     {
         printf("invalid key length\n");
@@ -44,16 +46,16 @@ static bool validate_key(const char *key)
 Arguments parse_arguments(int argc, char *argv[])
 {
     int option;
-    Arguments args = {NULL, NULL, NULL, NULL};
+    Arguments args = {NULL, NULL, NULL, NULL, false};
 
-    while ((option = getopt(argc, argv, "hk:f:o:")) != -1)
+    while ((option = getopt(argc, argv, "hvk:f:o:")) != -1)
     {
         switch (option)
         {
-        case 'h':
+        case HELP_SHORT_OPTION:
             print_help();
             break;
-        case 'k':
+        case KEY_SHORT_OPTION:
             printf("Key: %s\n", optarg);
             const bool is_key_valid = validate_key(optarg);
             if(!is_key_valid)
@@ -63,8 +65,8 @@ Arguments parse_arguments(int argc, char *argv[])
             }
             args.key = optarg;
             break;
-        case 'f':
-            printf("key file: %s\n", optarg);
+        case KEY_FILE_SHORT_OPTION:
+            //printf("key file: %s\n", optarg);
             args.key_file = malloc(strlen(optarg) + 1);
             if (args.key_file == NULL)
             {
@@ -74,12 +76,15 @@ Arguments parse_arguments(int argc, char *argv[])
             strcpy(args.key_file, optarg);
 
             break;
-        case 'o':
+        case OUTPUT_FILE_SHORT_OPTION:
             if (strcmp(optarg, "-") != 0)
             {
                 args.output_file = optarg;
             }
             break;
+        case VERSION_API_OPTION:
+            print_version();
+            break;            
         default:
             print_help();
             break;
