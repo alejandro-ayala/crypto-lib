@@ -1,5 +1,5 @@
 #!/bin/bash
-tests_dir="./test"
+tests_dir="./automatic_test"
 lib_dir="./crypt_lib"
 cmd_app_dir="./cmd_line_app"
 common_dir="./common"

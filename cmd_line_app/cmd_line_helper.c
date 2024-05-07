@@ -1,13 +1,10 @@
 #include "cmd_line_helper.h"
-#include "common/string_literals.h"
+#include "common/constants.h"
 #include "crypt_lib/crypt.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-#define MIN_KEY_LENGTH 1
-#define MAX_KEY_LENGTH 256
 
 static void print_help()
 {
@@ -35,7 +32,9 @@ bool validate_key(const char *key)
     bool is_valid = true;
     if (key_length < MIN_KEY_LENGTH || key_length > MAX_KEY_LENGTH)
     {
+#ifdef DEBUG        
         printf("invalid key length\n");
+#endif
         is_valid = false;
     }
     return is_valid;
@@ -54,7 +53,10 @@ Arguments parse_arguments(int argc, char *argv[])
             print_help();
             break;
         case KEY_SHORT_OPTION:
-            printf("Key: %s\n", optarg);
+        {
+#ifdef DEBUG
+            printf("Key: %s\n", optarg);    
+#endif
             const bool is_key_valid = validate_key(optarg);
             if(!is_key_valid)
             {
@@ -63,6 +65,7 @@ Arguments parse_arguments(int argc, char *argv[])
             }
             args.key = optarg;
             break;
+        }
         case KEY_FILE_SHORT_OPTION:
             //printf("key file: %s\n", optarg);
             args.key_file = malloc(strlen(optarg) + 1);

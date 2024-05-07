@@ -24,7 +24,7 @@ This is the library that includes the implementation of the required algorithm. 
 
 ## Additional Files
 Additionally, there are other files organized in the following folders:
-- **common**: Includes the versioning file and header files with constants used in the program.
+- **common**: Includes the versioning file and header files with the constants used in the project.
 - **resources**: Contains `.txt` files that contain information about the variables provided for automatic testing (`coded1[]` - `coded5[]` and `key.txt`), converted to ASCII format for use with the console application.
 - **build.sh**: Script to automate the compilation process.
 

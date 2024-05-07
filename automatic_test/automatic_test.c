@@ -89,8 +89,6 @@ void parse_arguments_invalid_key(void)
 void automatic_test_sample(void)
 {
     uint8_t key[] = {0xc1, 0xab, 0xe5, 0xec, 0x1e, 0x7a};
-    printf("Keysss: %s\n", key);
-    printf("sdasd\n");
     uint8_t coded1[] = {0x85, 0xc9, 0x84, 0x80, 0x46, 0x16, 0xaf, 0xca,
 
                         0xc9, 0x81, 0x43, 0xe1, 0xac, 0xdd, 0xcb, 0x81,
@@ -167,35 +165,45 @@ void automatic_test_sample(void)
     test_results_file = fopen("test_results_file.txt", "w+");
     DECODE_AND_PRINT(coded1);
     uint8_t *file_content = read_decoded_input();
+#ifdef DEBUG
     printf("Comparing '%s' to '%s':\n", file_content, expected_decoded_input1);
+#endif
     TEST_CHECK(strcmp(file_content, expected_decoded_input1) == 0);
     free(file_content);
 
     test_results_file = fopen("test_results_file.txt", "w+");
     DECODE_AND_PRINT(coded2);
     file_content = read_decoded_input();
+#ifdef DEBUG
     printf("Comparing '%s' to '%s':\n", file_content, expected_decoded_input2_3);
+#endif
     TEST_CHECK(strcmp(file_content, expected_decoded_input2_3) == 0);
     free(file_content);
 
     test_results_file = fopen("test_results_file.txt", "w+");
     DECODE_AND_PRINT(coded3);
     file_content = read_decoded_input();
+#ifdef DEBUG    
     printf("Comparing '%s' to '%s':\n", file_content, expected_decoded_input2_3);
+#endif
     TEST_CHECK(strcmp(file_content, expected_decoded_input2_3) == 0);
     free(file_content);
 
     test_results_file = fopen("test_results_file.txt", "w+");
     DECODE_AND_PRINT(coded4);
     file_content = read_decoded_input();
+#ifdef DEBUG
     printf("Comparing '%s' to '%s':\n", file_content, expected_decoded_input4);
+#endif
     TEST_CHECK(strcmp(file_content, expected_decoded_input4) == 0);
     free(file_content);
 
     test_results_file = fopen("test_results_file.txt", "w+");
     DECODE_AND_PRINT(coded5);
     file_content = read_decoded_input();
+#ifdef DEBUG    
     printf("Comparing '%s' to '%s':\n", file_content, expected_decoded_input5);
+#endif
     TEST_CHECK(strcmp(file_content, expected_decoded_input5) == 0);
     free(file_content);
 }
@@ -227,7 +235,9 @@ void automatic_test_encrypt_and_decrypt(void)
     context.iteration = 0;
     DECODE_AND_PRINT(encrypted_data);
     file_content = read_decoded_input();
+#ifdef DEBUG    
     printf("Comparing '%s' to '%s':\n", file_content, original_data);
+#endif    
     TEST_CHECK(strcmp(file_content, original_data) == 0);
     free(file_content);
     free(context.key);
@@ -258,7 +268,9 @@ void automatic_test_encrypt_and_decrypt_fail(void)
     test_results_file = fopen("test_results_file.txt", "w+");
     DECODE_AND_PRINT(encrypted_data);
     file_content = read_decoded_input();
+#ifdef DEBUG    
     printf("Comparing '%s' to '%s':\n", file_content, original_data);
+#endif
     TEST_CHECK(strcmp(file_content, original_data) != 0);
     free(file_content);
     free(context.key);

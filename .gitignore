@@ -4,3 +4,4 @@
 *.txt
 !resources/*.txt
 test/acutest/*
+out/
